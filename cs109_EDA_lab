@@ -1,0 +1,2096 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled15.ipynb",
+      "version": "0.3.2",
+      "provenance": [],
+      "collapsed_sections": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/ashish0526/machinelearning/blob/master/cs109_EDA_lab\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "AtNTCYq0wOiN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "%matplotlib inline\n",
+        "\n",
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "import seaborn as sns\n"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SryRgjI3wbwr",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "pd.set_option('display.width', 500)\n",
+        "pd.set_option('display.max_columns', 100)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "GsVXnNxLwee9",
+        "colab_type": "code",
+        "outputId": "7c878804-58c7-4c9c-862d-12c5d7e1d13c",
+        "colab": {
+          "resources": {
+            "http://localhost:8080/nbextensions/google.colab/files.js": {
+              "data": "Ly8gQ29weXJpZ2h0IDIwMTcgR29vZ2xlIExMQwovLwovLyBMaWNlbnNlZCB1bmRlciB0aGUgQXBhY2hlIExpY2Vuc2UsIFZlcnNpb24gMi4wICh0aGUgIkxpY2Vuc2UiKTsKLy8geW91IG1heSBub3QgdXNlIHRoaXMgZmlsZSBleGNlcHQgaW4gY29tcGxpYW5jZSB3aXRoIHRoZSBMaWNlbnNlLgovLyBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKLy8KLy8gICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKLy8KLy8gVW5sZXNzIHJlcXVpcmVkIGJ5IGFwcGxpY2FibGUgbGF3IG9yIGFncmVlZCB0byBpbiB3cml0aW5nLCBzb2Z0d2FyZQovLyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAovLyBXSVRIT1VUIFdBUlJBTlRJRVMgT1IgQ09ORElUSU9OUyBPRiBBTlkgS0lORCwgZWl0aGVyIGV4cHJlc3Mgb3IgaW1wbGllZC4KLy8gU2VlIHRoZSBMaWNlbnNlIGZvciB0aGUgc3BlY2lmaWMgbGFuZ3VhZ2UgZ292ZXJuaW5nIHBlcm1pc3Npb25zIGFuZAovLyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCi8qKgogKiBAZmlsZW92ZXJ2aWV3IEhlbHBlcnMgZm9yIGdvb2dsZS5jb2xhYiBQeXRob24gbW9kdWxlLgogKi8KKGZ1bmN0aW9uKHNjb3BlKSB7CmZ1bmN0aW9uIHNwYW4odGV4dCwgc3R5bGVBdHRyaWJ1dGVzID0ge30pIHsKICBjb25zdCBlbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogIGVsZW1lbnQudGV4dENvbnRlbnQgPSB0ZXh0OwogIGZvciAoY29uc3Qga2V5IG9mIE9iamVjdC5rZXlzKHN0eWxlQXR0cmlidXRlcykpIHsKICAgIGVsZW1lbnQuc3R5bGVba2V5XSA9IHN0eWxlQXR0cmlidXRlc1trZXldOwogIH0KICByZXR1cm4gZWxlbWVudDsKfQoKLy8gTWF4IG51bWJlciBvZiBieXRlcyB3aGljaCB3aWxsIGJlIHVwbG9hZGVkIGF0IGEgdGltZS4KY29uc3QgTUFYX1BBWUxPQURfU0laRSA9IDEwMCAqIDEwMjQ7Ci8vIE1heCBhbW91bnQgb2YgdGltZSB0byBibG9jayB3YWl0aW5nIGZvciB0aGUgdXNlci4KY29uc3QgRklMRV9DSEFOR0VfVElNRU9VVF9NUyA9IDMwICogMTAwMDsKCmZ1bmN0aW9uIF91cGxvYWRGaWxlcyhpbnB1dElkLCBvdXRwdXRJZCkgewogIGNvbnN0IHN0ZXBzID0gdXBsb2FkRmlsZXNTdGVwKGlucHV0SWQsIG91dHB1dElkKTsKICBjb25zdCBvdXRwdXRFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQob3V0cHV0SWQpOwogIC8vIENhY2hlIHN0ZXBzIG9uIHRoZSBvdXRwdXRFbGVtZW50IHRvIG1ha2UgaXQgYXZhaWxhYmxlIGZvciB0aGUgbmV4dCBjYWxsCiAgLy8gdG8gdXBsb2FkRmlsZXNDb250aW51ZSBmcm9tIFB5dGhvbi4KICBvdXRwdXRFbGVtZW50LnN0ZXBzID0gc3RlcHM7CgogIHJldHVybiBfdXBsb2FkRmlsZXNDb250aW51ZShvdXRwdXRJZCk7Cn0KCi8vIFRoaXMgaXMgcm91Z2hseSBhbiBhc3luYyBnZW5lcmF0b3IgKG5vdCBzdXBwb3J0ZWQgaW4gdGhlIGJyb3dzZXIgeWV0KSwKLy8gd2hlcmUgdGhlcmUgYXJlIG11bHRpcGxlIGFzeW5jaHJvbm91cyBzdGVwcyBhbmQgdGhlIFB5dGhvbiBzaWRlIGlzIGdvaW5nCi8vIHRvIHBvbGwgZm9yIGNvbXBsZXRpb24gb2YgZWFjaCBzdGVwLgovLyBUaGlzIHVzZXMgYSBQcm9taXNlIHRvIGJsb2NrIHRoZSBweXRob24gc2lkZSBvbiBjb21wbGV0aW9uIG9mIGVhY2ggc3RlcCwKLy8gdGhlbiBwYXNzZXMgdGhlIHJlc3VsdCBvZiB0aGUgcHJldmlvdXMgc3RlcCBhcyB0aGUgaW5wdXQgdG8gdGhlIG5leHQgc3RlcC4KZnVuY3Rpb24gX3VwbG9hZEZpbGVzQ29udGludWUob3V0cHV0SWQpIHsKICBjb25zdCBvdXRwdXRFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQob3V0cHV0SWQpOwogIGNvbnN0IHN0ZXBzID0gb3V0cHV0RWxlbWVudC5zdGVwczsKCiAgY29uc3QgbmV4dCA9IHN0ZXBzLm5leHQob3V0cHV0RWxlbWVudC5sYXN0UHJvbWlzZVZhbHVlKTsKICByZXR1cm4gUHJvbWlzZS5yZXNvbHZlKG5leHQudmFsdWUucHJvbWlzZSkudGhlbigodmFsdWUpID0+IHsKICAgIC8vIENhY2hlIHRoZSBsYXN0IHByb21pc2UgdmFsdWUgdG8gbWFrZSBpdCBhdmFpbGFibGUgdG8gdGhlIG5leHQKICAgIC8vIHN0ZXAgb2YgdGhlIGdlbmVyYXRvci4KICAgIG91dHB1dEVsZW1lbnQubGFzdFByb21pc2VWYWx1ZSA9IHZhbHVlOwogICAgcmV0dXJuIG5leHQudmFsdWUucmVzcG9uc2U7CiAgfSk7Cn0KCi8qKgogKiBHZW5lcmF0b3IgZnVuY3Rpb24gd2hpY2ggaXMgY2FsbGVkIGJldHdlZW4gZWFjaCBhc3luYyBzdGVwIG9mIHRoZSB1cGxvYWQKICogcHJvY2Vzcy4KICogQHBhcmFtIHtzdHJpbmd9IGlucHV0SWQgRWxlbWVudCBJRCBvZiB0aGUgaW5wdXQgZmlsZSBwaWNrZXIgZWxlbWVudC4KICogQHBhcmFtIHtzdHJpbmd9IG91dHB1dElkIEVsZW1lbnQgSUQgb2YgdGhlIG91dHB1dCBkaXNwbGF5LgogKiBAcmV0dXJuIHshSXRlcmFibGU8IU9iamVjdD59IEl0ZXJhYmxlIG9mIG5leHQgc3RlcHMuCiAqLwpmdW5jdGlvbiogdXBsb2FkRmlsZXNTdGVwKGlucHV0SWQsIG91dHB1dElkKSB7CiAgY29uc3QgaW5wdXRFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoaW5wdXRJZCk7CiAgaW5wdXRFbGVtZW50LmRpc2FibGVkID0gZmFsc2U7CgogIGNvbnN0IG91dHB1dEVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChvdXRwdXRJZCk7CiAgb3V0cHV0RWxlbWVudC5pbm5lckhUTUwgPSAnJzsKCiAgY29uc3QgcGlja2VkUHJvbWlzZSA9IG5ldyBQcm9taXNlKChyZXNvbHZlKSA9PiB7CiAgICBpbnB1dEVsZW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignY2hhbmdlJywgKGUpID0+IHsKICAgICAgcmVzb2x2ZShlLnRhcmdldC5maWxlcyk7CiAgICB9KTsKICB9KTsKCiAgY29uc3QgY2FuY2VsID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYnV0dG9uJyk7CiAgaW5wdXRFbGVtZW50LnBhcmVudEVsZW1lbnQuYXBwZW5kQ2hpbGQoY2FuY2VsKTsKICBjYW5jZWwudGV4dENvbnRlbnQgPSAnQ2FuY2VsIHVwbG9hZCc7CiAgY29uc3QgY2FuY2VsUHJvbWlzZSA9IG5ldyBQcm9taXNlKChyZXNvbHZlKSA9PiB7CiAgICBjYW5jZWwub25jbGljayA9ICgpID0+IHsKICAgICAgcmVzb2x2ZShudWxsKTsKICAgIH07CiAgfSk7CgogIC8vIENhbmNlbCB1cGxvYWQgaWYgdXNlciBoYXNuJ3QgcGlja2VkIGFueXRoaW5nIGluIHRpbWVvdXQuCiAgY29uc3QgdGltZW91dFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgc2V0VGltZW91dCgoKSA9PiB7CiAgICAgIHJlc29sdmUobnVsbCk7CiAgICB9LCBGSUxFX0NIQU5HRV9USU1FT1VUX01TKTsKICB9KTsKCiAgLy8gV2FpdCBmb3IgdGhlIHVzZXIgdG8gcGljayB0aGUgZmlsZXMuCiAgY29uc3QgZmlsZXMgPSB5aWVsZCB7CiAgICBwcm9taXNlOiBQcm9taXNlLnJhY2UoW3BpY2tlZFByb21pc2UsIHRpbWVvdXRQcm9taXNlLCBjYW5jZWxQcm9taXNlXSksCiAgICByZXNwb25zZTogewogICAgICBhY3Rpb246ICdzdGFydGluZycsCiAgICB9CiAgfTsKCiAgaWYgKCFmaWxlcykgewogICAgcmV0dXJuIHsKICAgICAgcmVzcG9uc2U6IHsKICAgICAgICBhY3Rpb246ICdjb21wbGV0ZScsCiAgICAgIH0KICAgIH07CiAgfQoKICBjYW5jZWwucmVtb3ZlKCk7CgogIC8vIERpc2FibGUgdGhlIGlucHV0IGVsZW1lbnQgc2luY2UgZnVydGhlciBwaWNrcyBhcmUgbm90IGFsbG93ZWQuCiAgaW5wdXRFbGVtZW50LmRpc2FibGVkID0gdHJ1ZTsKCiAgZm9yIChjb25zdCBmaWxlIG9mIGZpbGVzKSB7CiAgICBjb25zdCBsaSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2xpJyk7CiAgICBsaS5hcHBlbmQoc3BhbihmaWxlLm5hbWUsIHtmb250V2VpZ2h0OiAnYm9sZCd9KSk7CiAgICBsaS5hcHBlbmQoc3BhbigKICAgICAgICBgKCR7ZmlsZS50eXBlIHx8ICduL2EnfSkgLSAke2ZpbGUuc2l6ZX0gYnl0ZXMsIGAgKwogICAgICAgIGBsYXN0IG1vZGlmaWVkOiAkewogICAgICAgICAgICBmaWxlLmxhc3RNb2RpZmllZERhdGUgPyBmaWxlLmxhc3RNb2RpZmllZERhdGUudG9Mb2NhbGVEYXRlU3RyaW5nKCkgOgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnbi9hJ30gLSBgKSk7CiAgICBjb25zdCBwZXJjZW50ID0gc3BhbignMCUgZG9uZScpOwogICAgbGkuYXBwZW5kQ2hpbGQocGVyY2VudCk7CgogICAgb3V0cHV0RWxlbWVudC5hcHBlbmRDaGlsZChsaSk7CgogICAgY29uc3QgZmlsZURhdGFQcm9taXNlID0gbmV3IFByb21pc2UoKHJlc29sdmUpID0+IHsKICAgICAgY29uc3QgcmVhZGVyID0gbmV3IEZpbGVSZWFkZXIoKTsKICAgICAgcmVhZGVyLm9ubG9hZCA9IChlKSA9PiB7CiAgICAgICAgcmVzb2x2ZShlLnRhcmdldC5yZXN1bHQpOwogICAgICB9OwogICAgICByZWFkZXIucmVhZEFzQXJyYXlCdWZmZXIoZmlsZSk7CiAgICB9KTsKICAgIC8vIFdhaXQgZm9yIHRoZSBkYXRhIHRvIGJlIHJlYWR5LgogICAgbGV0IGZpbGVEYXRhID0geWllbGQgewogICAgICBwcm9taXNlOiBmaWxlRGF0YVByb21pc2UsCiAgICAgIHJlc3BvbnNlOiB7CiAgICAgICAgYWN0aW9uOiAnY29udGludWUnLAogICAgICB9CiAgICB9OwoKICAgIC8vIFVzZSBhIGNodW5rZWQgc2VuZGluZyB0byBhdm9pZCBtZXNzYWdlIHNpemUgbGltaXRzLiBTZWUgYi82MjExNTY2MC4KICAgIGxldCBwb3NpdGlvbiA9IDA7CiAgICB3aGlsZSAocG9zaXRpb24gPCBmaWxlRGF0YS5ieXRlTGVuZ3RoKSB7CiAgICAgIGNvbnN0IGxlbmd0aCA9IE1hdGgubWluKGZpbGVEYXRhLmJ5dGVMZW5ndGggLSBwb3NpdGlvbiwgTUFYX1BBWUxPQURfU0laRSk7CiAgICAgIGNvbnN0IGNodW5rID0gbmV3IFVpbnQ4QXJyYXkoZmlsZURhdGEsIHBvc2l0aW9uLCBsZW5ndGgpOwogICAgICBwb3NpdGlvbiArPSBsZW5ndGg7CgogICAgICBjb25zdCBiYXNlNjQgPSBidG9hKFN0cmluZy5mcm9tQ2hhckNvZGUuYXBwbHkobnVsbCwgY2h1bmspKTsKICAgICAgeWllbGQgewogICAgICAgIHJlc3BvbnNlOiB7CiAgICAgICAgICBhY3Rpb246ICdhcHBlbmQnLAogICAgICAgICAgZmlsZTogZmlsZS5uYW1lLAogICAgICAgICAgZGF0YTogYmFzZTY0LAogICAgICAgIH0sCiAgICAgIH07CiAgICAgIHBlcmNlbnQudGV4dENvbnRlbnQgPQogICAgICAgICAgYCR7TWF0aC5yb3VuZCgocG9zaXRpb24gLyBmaWxlRGF0YS5ieXRlTGVuZ3RoKSAqIDEwMCl9JSBkb25lYDsKICAgIH0KICB9CgogIC8vIEFsbCBkb25lLgogIHlpZWxkIHsKICAgIHJlc3BvbnNlOiB7CiAgICAgIGFjdGlvbjogJ2NvbXBsZXRlJywKICAgIH0KICB9Owp9CgpzY29wZS5nb29nbGUgPSBzY29wZS5nb29nbGUgfHwge307CnNjb3BlLmdvb2dsZS5jb2xhYiA9IHNjb3BlLmdvb2dsZS5jb2xhYiB8fCB7fTsKc2NvcGUuZ29vZ2xlLmNvbGFiLl9maWxlcyA9IHsKICBfdXBsb2FkRmlsZXMsCiAgX3VwbG9hZEZpbGVzQ29udGludWUsCn07Cn0pKHNlbGYpOwo=",
+              "ok": true,
+              "headers": [
+                [
+                  "content-type",
+                  "application/javascript"
+                ]
+              ],
+              "status": 200,
+              "status_text": ""
+            }
+          },
+          "base_uri": "https://localhost:8080/",
+          "height": 74
+        }
+      },
+      "source": [
+        "from google.colab import files\n",
+        "uploaded = files.upload()"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "\n",
+              "     <input type=\"file\" id=\"files-dac9d85e-10bd-43e8-9519-7ba830cf1b71\" name=\"files[]\" multiple disabled />\n",
+              "     <output id=\"result-dac9d85e-10bd-43e8-9519-7ba830cf1b71\">\n",
+              "      Upload widget is only available when the cell has been executed in the\n",
+              "      current browser session. Please rerun this cell to enable.\n",
+              "      </output>\n",
+              "      <script src=\"/nbextensions/google.colab/files.js\"></script> "
+            ],
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        },
+        {
+          "output_type": "stream",
+          "text": [
+            "Saving goodreads.csv to goodreads.csv\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "dXGKz7QLx1Mp",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import io\n",
+        "df = pd.read_csv(io.BytesIO(uploaded['goodreads.csv']))"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "P51-IHsryKZ-",
+        "colab_type": "code",
+        "outputId": "972f64cb-4260-4275-ce79-ec33ae009453",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 479
+        }
+      },
+      "source": [
+        "df.head()"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>4.40</th>\n",
+              "      <th>136455</th>\n",
+              "      <th>0439023483</th>\n",
+              "      <th>good_reads:book</th>\n",
+              "      <th>https://www.goodreads.com/author/show/153394.Suzanne_Collins</th>\n",
+              "      <th>2008</th>\n",
+              "      <th>/genres/young-adult|/genres/science-fiction|/genres/dystopia|/genres/fantasy|/genres/science-fiction|/genres/romance|/genres/adventure|/genres/book-club|/genres/young-adult|/genres/teen|/genres/apocalyptic|/genres/post-apocalyptic|/genres/action</th>\n",
+              "      <th>dir01/2767052-the-hunger-games.html</th>\n",
+              "      <th>2958974</th>\n",
+              "      <th>The Hunger Games (The Hunger Games, #1)</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>4.41</td>\n",
+              "      <td>16648</td>\n",
+              "      <td>0439358078</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1077326....</td>\n",
+              "      <td>2003.0</td>\n",
+              "      <td>/genres/fantasy|/genres/young-adult|/genres/fi...</td>\n",
+              "      <td>dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...</td>\n",
+              "      <td>1284478</td>\n",
+              "      <td>Harry Potter and the Order of the Phoenix (Har...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>3.56</td>\n",
+              "      <td>85746</td>\n",
+              "      <td>0316015849</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/941441.S...</td>\n",
+              "      <td>2005.0</td>\n",
+              "      <td>/genres/young-adult|/genres/fantasy|/genres/ro...</td>\n",
+              "      <td>dir01/41865.Twilight.html</td>\n",
+              "      <td>2579564</td>\n",
+              "      <td>Twilight (Twilight, #1)</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>47906</td>\n",
+              "      <td>0061120081</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1825.Har...</td>\n",
+              "      <td>1960.0</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/histo...</td>\n",
+              "      <td>dir01/2657.To_Kill_a_Mockingbird.html</td>\n",
+              "      <td>2078123</td>\n",
+              "      <td>To Kill a Mockingbird</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>34772</td>\n",
+              "      <td>0679783261</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1265.Jan...</td>\n",
+              "      <td>1813.0</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/roman...</td>\n",
+              "      <td>dir01/1885.Pride_and_Prejudice.html</td>\n",
+              "      <td>1388992</td>\n",
+              "      <td>Pride and Prejudice</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>4.25</td>\n",
+              "      <td>12363</td>\n",
+              "      <td>0446675539</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/11081.Ma...</td>\n",
+              "      <td>1936.0</td>\n",
+              "      <td>/genres/classics|/genres/historical-fiction|/g...</td>\n",
+              "      <td>dir01/18405.Gone_with_the_Wind.html</td>\n",
+              "      <td>645470</td>\n",
+              "      <td>Gone with the Wind</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   4.40 136455  0439023483  good_reads:book https://www.goodreads.com/author/show/153394.Suzanne_Collins    2008 /genres/young-adult|/genres/science-fiction|/genres/dystopia|/genres/fantasy|/genres/science-fiction|/genres/romance|/genres/adventure|/genres/book-club|/genres/young-adult|/genres/teen|/genres/apocalyptic|/genres/post-apocalyptic|/genres/action                dir01/2767052-the-hunger-games.html  2958974            The Hunger Games (The Hunger Games, #1)\n",
+              "0  4.41  16648  0439358078  good_reads:book  https://www.goodreads.com/author/show/1077326....            2003.0  /genres/fantasy|/genres/young-adult|/genres/fi...                                                                                                                                                                                                     dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...  1284478  Harry Potter and the Order of the Phoenix (Har...\n",
+              "1  3.56  85746  0316015849  good_reads:book  https://www.goodreads.com/author/show/941441.S...            2005.0  /genres/young-adult|/genres/fantasy|/genres/ro...                                                                                                                                                                                                                             dir01/41865.Twilight.html  2579564                            Twilight (Twilight, #1)\n",
+              "2  4.23  47906  0061120081  good_reads:book  https://www.goodreads.com/author/show/1825.Har...            1960.0  /genres/classics|/genres/fiction|/genres/histo...                                                                                                                                                                                                                 dir01/2657.To_Kill_a_Mockingbird.html  2078123                              To Kill a Mockingbird\n",
+              "3  4.23  34772  0679783261  good_reads:book  https://www.goodreads.com/author/show/1265.Jan...            1813.0  /genres/classics|/genres/fiction|/genres/roman...                                                                                                                                                                                                                   dir01/1885.Pride_and_Prejudice.html  1388992                                Pride and Prejudice\n",
+              "4  4.25  12363  0446675539  good_reads:book  https://www.goodreads.com/author/show/11081.Ma...            1936.0  /genres/classics|/genres/historical-fiction|/g...                                                                                                                                                                                                                   dir01/18405.Gone_with_the_Wind.html   645470                                 Gone with the Wind"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "QYVbuzlDy6d_",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df = pd.read_csv(io.BytesIO(uploaded['goodreads.csv']),header=None, names=[\"rating\", 'review_count', 'isbn', 'booktype','author_url', 'year', 'genre_urls', 'dir','rating_count', 'name'],\n",
+        ")"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "O4AEYeRJy0OU",
+        "colab_type": "code",
+        "outputId": "d61025f2-1a20-4a88-f0bc-a755e150da31",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 204
+        }
+      },
+      "source": [
+        "df.dtypes"
+      ],
+      "execution_count": 52,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "rating          float64\n",
+              "review_count     object\n",
+              "isbn             object\n",
+              "booktype         object\n",
+              "author_url       object\n",
+              "year            float64\n",
+              "genre_urls       object\n",
+              "dir              object\n",
+              "rating_count     object\n",
+              "name             object\n",
+              "dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 52
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mPT4trEfzb4M",
+        "colab_type": "code",
+        "outputId": "2f31db36-026a-4fef-fe80-db23d5f1734e",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 450
+        }
+      },
+      "source": [
+        "print(df.shape)\n",
+        "df.columns\n",
+        "df.head()"
+      ],
+      "execution_count": 53,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "(6000, 10)\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>rating</th>\n",
+              "      <th>review_count</th>\n",
+              "      <th>isbn</th>\n",
+              "      <th>booktype</th>\n",
+              "      <th>author_url</th>\n",
+              "      <th>year</th>\n",
+              "      <th>genre_urls</th>\n",
+              "      <th>dir</th>\n",
+              "      <th>rating_count</th>\n",
+              "      <th>name</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>4.40</td>\n",
+              "      <td>136455</td>\n",
+              "      <td>0439023483</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/153394.S...</td>\n",
+              "      <td>2008.0</td>\n",
+              "      <td>/genres/young-adult|/genres/science-fiction|/g...</td>\n",
+              "      <td>dir01/2767052-the-hunger-games.html</td>\n",
+              "      <td>2958974</td>\n",
+              "      <td>The Hunger Games (The Hunger Games, #1)</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>4.41</td>\n",
+              "      <td>16648</td>\n",
+              "      <td>0439358078</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1077326....</td>\n",
+              "      <td>2003.0</td>\n",
+              "      <td>/genres/fantasy|/genres/young-adult|/genres/fi...</td>\n",
+              "      <td>dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...</td>\n",
+              "      <td>1284478</td>\n",
+              "      <td>Harry Potter and the Order of the Phoenix (Har...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>3.56</td>\n",
+              "      <td>85746</td>\n",
+              "      <td>0316015849</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/941441.S...</td>\n",
+              "      <td>2005.0</td>\n",
+              "      <td>/genres/young-adult|/genres/fantasy|/genres/ro...</td>\n",
+              "      <td>dir01/41865.Twilight.html</td>\n",
+              "      <td>2579564</td>\n",
+              "      <td>Twilight (Twilight, #1)</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>47906</td>\n",
+              "      <td>0061120081</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1825.Har...</td>\n",
+              "      <td>1960.0</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/histo...</td>\n",
+              "      <td>dir01/2657.To_Kill_a_Mockingbird.html</td>\n",
+              "      <td>2078123</td>\n",
+              "      <td>To Kill a Mockingbird</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>34772</td>\n",
+              "      <td>0679783261</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1265.Jan...</td>\n",
+              "      <td>1813.0</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/roman...</td>\n",
+              "      <td>dir01/1885.Pride_and_Prejudice.html</td>\n",
+              "      <td>1388992</td>\n",
+              "      <td>Pride and Prejudice</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   rating review_count        isbn         booktype                                         author_url    year                                         genre_urls                                                dir rating_count                                               name\n",
+              "0    4.40       136455  0439023483  good_reads:book  https://www.goodreads.com/author/show/153394.S...  2008.0  /genres/young-adult|/genres/science-fiction|/g...                dir01/2767052-the-hunger-games.html      2958974            The Hunger Games (The Hunger Games, #1)\n",
+              "1    4.41        16648  0439358078  good_reads:book  https://www.goodreads.com/author/show/1077326....  2003.0  /genres/fantasy|/genres/young-adult|/genres/fi...  dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...      1284478  Harry Potter and the Order of the Phoenix (Har...\n",
+              "2    3.56        85746  0316015849  good_reads:book  https://www.goodreads.com/author/show/941441.S...  2005.0  /genres/young-adult|/genres/fantasy|/genres/ro...                          dir01/41865.Twilight.html      2579564                            Twilight (Twilight, #1)\n",
+              "3    4.23        47906  0061120081  good_reads:book  https://www.goodreads.com/author/show/1825.Har...  1960.0  /genres/classics|/genres/fiction|/genres/histo...              dir01/2657.To_Kill_a_Mockingbird.html      2078123                              To Kill a Mockingbird\n",
+              "4    4.23        34772  0679783261  good_reads:book  https://www.goodreads.com/author/show/1265.Jan...  1813.0  /genres/classics|/genres/fiction|/genres/roman...                dir01/1885.Pride_and_Prejudice.html      1388992                                Pride and Prejudice"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 53
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "a0l3U70Kzmi4",
+        "colab_type": "code",
+        "outputId": "f079da67-d244-4016-8988-c1f89fafa2ac",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        }
+      },
+      "source": [
+        "np.sum(df.rating.isnull())"
+      ],
+      "execution_count": 54,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "2"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 54
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-WBSZjXlzyUD",
+        "colab_type": "code",
+        "outputId": "f4a49e26-5ae7-4180-b0fe-514bacce0cee",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 111
+        }
+      },
+      "source": [
+        "df[df.rating.isnull()]"
+      ],
+      "execution_count": 55,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>rating</th>\n",
+              "      <th>review_count</th>\n",
+              "      <th>isbn</th>\n",
+              "      <th>booktype</th>\n",
+              "      <th>author_url</th>\n",
+              "      <th>year</th>\n",
+              "      <th>genre_urls</th>\n",
+              "      <th>dir</th>\n",
+              "      <th>rating_count</th>\n",
+              "      <th>name</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>3643</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>dir37/9658936-harry-potter.html</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5282</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>dir53/113138.The_Winner.html</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "      rating review_count  isbn booktype author_url  year genre_urls                              dir rating_count  name\n",
+              "3643     NaN         None  None     None       None   NaN        NaN  dir37/9658936-harry-potter.html         None  None\n",
+              "5282     NaN         None  None     None       None   NaN        NaN     dir53/113138.The_Winner.html         None  None"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 55
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9G19EiJmz8MU",
+        "colab_type": "code",
+        "outputId": "86ff7c76-ab89-4bf8-864b-96c2a3469ae7",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 563
+        }
+      },
+      "source": [
+        "df[df.year.isnull()]"
+      ],
+      "execution_count": 57,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>rating</th>\n",
+              "      <th>review_count</th>\n",
+              "      <th>isbn</th>\n",
+              "      <th>booktype</th>\n",
+              "      <th>author_url</th>\n",
+              "      <th>year</th>\n",
+              "      <th>genre_urls</th>\n",
+              "      <th>dir</th>\n",
+              "      <th>rating_count</th>\n",
+              "      <th>name</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2442</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>526</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/623606.A...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>/genres/religion|/genres/islam|/genres/non-fic...</td>\n",
+              "      <td>dir25/1301625.La_Tahzan.html</td>\n",
+              "      <td>4134</td>\n",
+              "      <td>La Tahzan</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2869</th>\n",
+              "      <td>4.61</td>\n",
+              "      <td>2</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/8182217....</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>dir29/22031070-my-death-experiences---a-preach...</td>\n",
+              "      <td>23</td>\n",
+              "      <td>My Death Experiences - A Preacherâs 18 Apoca...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3643</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>dir37/9658936-harry-potter.html</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5282</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>dir53/113138.The_Winner.html</td>\n",
+              "      <td>None</td>\n",
+              "      <td>None</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5572</th>\n",
+              "      <td>3.71</td>\n",
+              "      <td>35</td>\n",
+              "      <td>8423336603</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/285658.E...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>/genres/fiction</td>\n",
+              "      <td>dir56/890680._rase_una_vez_el_amor_pero_tuve_q...</td>\n",
+              "      <td>403</td>\n",
+              "      <td>Ãrase una vez el amor pero tuve que matarlo. ...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5658</th>\n",
+              "      <td>4.32</td>\n",
+              "      <td>44</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/25307.Ro...</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>/genres/fantasy|/genres/fantasy|/genres/epic-f...</td>\n",
+              "      <td>dir57/5533041-assassin-s-apprentice-royal-assa...</td>\n",
+              "      <td>3850</td>\n",
+              "      <td>Assassin's Apprentice / Royal Assassin (Farsee...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5683</th>\n",
+              "      <td>4.56</td>\n",
+              "      <td>204</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/3097905....</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>/genres/fantasy|/genres/young-adult|/genres/ro...</td>\n",
+              "      <td>dir57/12474623-tiger-s-dream.html</td>\n",
+              "      <td>895</td>\n",
+              "      <td>Tiger's Dream (The Tiger Saga, #5)</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "      rating review_count        isbn         booktype                                         author_url  year                                         genre_urls                                                dir rating_count                                               name\n",
+              "2442    4.23          526         NaN  good_reads:book  https://www.goodreads.com/author/show/623606.A...   NaN  /genres/religion|/genres/islam|/genres/non-fic...                       dir25/1301625.La_Tahzan.html         4134                                          La Tahzan\n",
+              "2869    4.61            2         NaN  good_reads:book  https://www.goodreads.com/author/show/8182217....   NaN                                                NaN  dir29/22031070-my-death-experiences---a-preach...           23  My Death Experiences - A Preacherâs 18 Apoca...\n",
+              "3643     NaN         None        None             None                                               None   NaN                                                NaN                    dir37/9658936-harry-potter.html         None                                               None\n",
+              "5282     NaN         None        None             None                                               None   NaN                                                NaN                       dir53/113138.The_Winner.html         None                                               None\n",
+              "5572    3.71           35  8423336603  good_reads:book  https://www.goodreads.com/author/show/285658.E...   NaN                                    /genres/fiction  dir56/890680._rase_una_vez_el_amor_pero_tuve_q...          403  Ãrase una vez el amor pero tuve que matarlo. ...\n",
+              "5658    4.32           44         NaN  good_reads:book  https://www.goodreads.com/author/show/25307.Ro...   NaN  /genres/fantasy|/genres/fantasy|/genres/epic-f...  dir57/5533041-assassin-s-apprentice-royal-assa...         3850  Assassin's Apprentice / Royal Assassin (Farsee...\n",
+              "5683    4.56          204         NaN  good_reads:book  https://www.goodreads.com/author/show/3097905....   NaN  /genres/fantasy|/genres/young-adult|/genres/ro...                  dir57/12474623-tiger-s-dream.html          895                 Tiger's Dream (The Tiger Saga, #5)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 57
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "vGt8c4BP0GpF",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df = df[df.year.notnull()]"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "V4XsfVBp0Q3b",
+        "colab_type": "code",
+        "outputId": "5130f47b-af2a-4306-b973-a26e5bc3fe85",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 204
+        }
+      },
+      "source": [
+        "df.dtypes"
+      ],
+      "execution_count": 59,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "rating          float64\n",
+              "review_count     object\n",
+              "isbn             object\n",
+              "booktype         object\n",
+              "author_url       object\n",
+              "year            float64\n",
+              "genre_urls       object\n",
+              "dir              object\n",
+              "rating_count     object\n",
+              "name             object\n",
+              "dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 59
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "hPFiAwCD0SUC",
+        "colab_type": "code",
+        "outputId": "99129153-7599-4b14-ee7c-5bee31465d90",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        }
+      },
+      "source": [
+        "print(np.sum(df.year.isnull()))\n",
+        "print(np.sum(df.rating_count.isnull()))"
+      ],
+      "execution_count": 60,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "0\n",
+            "0\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cEdKyVrz0dio",
+        "colab_type": "code",
+        "outputId": "158fab90-e45a-428f-ba95-60a1ea112fac",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        }
+      },
+      "source": [
+        "print(np.sum(df.review_count.isnull())) \n",
+        "# We removed seven rows\n",
+        "\n",
+        "df.shape"
+      ],
+      "execution_count": 61,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "0\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(5993, 10)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 61
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "FPJH-JeJ0gQm",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df.review_count = df.review_count.astype(str).astype(int)\n",
+        "df.rating_count = df.rating_count.astype(str).astype(int)\n",
+        "df.year = df.year.astype(int)\n"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "w7e4QXyt0zHg",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 204
+        },
+        "outputId": "bef869ff-9977-4684-8215-76d8c75d262b"
+      },
+      "source": [
+        "df.dtypes"
+      ],
+      "execution_count": 44,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "rating          float64\n",
+              "review_count      int64\n",
+              "isbn             object\n",
+              "booktype         object\n",
+              "author_url       object\n",
+              "year              int64\n",
+              "genre_urls       object\n",
+              "dir              object\n",
+              "rating_count      int64\n",
+              "name             object\n",
+              "dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 44
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gNfOQ8OzAJxT",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df.loc[df.genre_urls.isnull(), 'genre_urls']=\"\"\n",
+        "df.loc[df.isbn.isnull(), 'isbn']=\"\""
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "dm6LRrACB3y6",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 428
+        },
+        "outputId": "509d0545-57cc-453d-e72e-3e9cd871e18d"
+      },
+      "source": [
+        "df.head()"
+      ],
+      "execution_count": 64,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>rating</th>\n",
+              "      <th>review_count</th>\n",
+              "      <th>isbn</th>\n",
+              "      <th>booktype</th>\n",
+              "      <th>author_url</th>\n",
+              "      <th>year</th>\n",
+              "      <th>genre_urls</th>\n",
+              "      <th>dir</th>\n",
+              "      <th>rating_count</th>\n",
+              "      <th>name</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>4.40</td>\n",
+              "      <td>136455</td>\n",
+              "      <td>0439023483</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/153394.S...</td>\n",
+              "      <td>2008</td>\n",
+              "      <td>/genres/young-adult|/genres/science-fiction|/g...</td>\n",
+              "      <td>dir01/2767052-the-hunger-games.html</td>\n",
+              "      <td>2958974</td>\n",
+              "      <td>The Hunger Games (The Hunger Games, #1)</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>4.41</td>\n",
+              "      <td>16648</td>\n",
+              "      <td>0439358078</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1077326....</td>\n",
+              "      <td>2003</td>\n",
+              "      <td>/genres/fantasy|/genres/young-adult|/genres/fi...</td>\n",
+              "      <td>dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...</td>\n",
+              "      <td>1284478</td>\n",
+              "      <td>Harry Potter and the Order of the Phoenix (Har...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>3.56</td>\n",
+              "      <td>85746</td>\n",
+              "      <td>0316015849</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/941441.S...</td>\n",
+              "      <td>2005</td>\n",
+              "      <td>/genres/young-adult|/genres/fantasy|/genres/ro...</td>\n",
+              "      <td>dir01/41865.Twilight.html</td>\n",
+              "      <td>2579564</td>\n",
+              "      <td>Twilight (Twilight, #1)</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>47906</td>\n",
+              "      <td>0061120081</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1825.Har...</td>\n",
+              "      <td>1960</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/histo...</td>\n",
+              "      <td>dir01/2657.To_Kill_a_Mockingbird.html</td>\n",
+              "      <td>2078123</td>\n",
+              "      <td>To Kill a Mockingbird</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>34772</td>\n",
+              "      <td>0679783261</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1265.Jan...</td>\n",
+              "      <td>1813</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/roman...</td>\n",
+              "      <td>dir01/1885.Pride_and_Prejudice.html</td>\n",
+              "      <td>1388992</td>\n",
+              "      <td>Pride and Prejudice</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   rating  review_count        isbn         booktype                                         author_url  year                                         genre_urls                                                dir  rating_count                                               name\n",
+              "0    4.40        136455  0439023483  good_reads:book  https://www.goodreads.com/author/show/153394.S...  2008  /genres/young-adult|/genres/science-fiction|/g...                dir01/2767052-the-hunger-games.html       2958974            The Hunger Games (The Hunger Games, #1)\n",
+              "1    4.41         16648  0439358078  good_reads:book  https://www.goodreads.com/author/show/1077326....  2003  /genres/fantasy|/genres/young-adult|/genres/fi...  dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...       1284478  Harry Potter and the Order of the Phoenix (Har...\n",
+              "2    3.56         85746  0316015849  good_reads:book  https://www.goodreads.com/author/show/941441.S...  2005  /genres/young-adult|/genres/fantasy|/genres/ro...                          dir01/41865.Twilight.html       2579564                            Twilight (Twilight, #1)\n",
+              "3    4.23         47906  0061120081  good_reads:book  https://www.goodreads.com/author/show/1825.Har...  1960  /genres/classics|/genres/fiction|/genres/histo...              dir01/2657.To_Kill_a_Mockingbird.html       2078123                              To Kill a Mockingbird\n",
+              "4    4.23         34772  0679783261  good_reads:book  https://www.goodreads.com/author/show/1265.Jan...  1813  /genres/classics|/genres/fiction|/genres/roman...                dir01/1885.Pride_and_Prejudice.html       1388992                                Pride and Prejudice"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 64
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "M9hYapPuDWu7",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "624560f1-b5f6-4f62-a617-4e16438e7181"
+      },
+      "source": [
+        "test_string = df[\"author_url\"][0]\n",
+        "\n",
+        "test_string"
+      ],
+      "execution_count": 66,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'https://www.goodreads.com/author/show/153394.Suzanne_Collins'"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 66
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Q2Z00Kl1D3nM",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "f66c9e50-6f2e-45b4-87b1-71fcbf313f00"
+      },
+      "source": [
+        "test_string.split(\"/\")[-1].split(\".\")[1:][0]"
+      ],
+      "execution_count": 67,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Suzanne_Collins'"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 67
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jShBZ8NyEQaH",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def get_author(url):\n",
+        "  name = url.split(\"/\")[-1].split(\".\")[1:][0]\n",
+        "  return name\n",
+        "  "
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gpatkucgEXps",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 119
+        },
+        "outputId": "cd008161-e04f-455f-fc1e-7b3bfe57ac17"
+      },
+      "source": [
+        "def get_author(url):\n",
+        "    \n",
+        "    name = url.split('/')[-1].split('.')[1:][0]\n",
+        "    ####### \n",
+        "    return name\n",
+        "\n",
+        "#Apply the get_author function to the 'author_url' column using '.map' \n",
+        "#and add a new column 'author' to store the names\n",
+        "df['author'] = df.author_url.map(get_author)\n",
+        "df.author[0:5]"
+      ],
+      "execution_count": 74,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0    Suzanne_Collins\n",
+              "1        J_K_Rowling\n",
+              "2    Stephenie_Meyer\n",
+              "3         Harper_Lee\n",
+              "4        Jane_Austen\n",
+              "Name: author, dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 74
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "TDEkfeMyEbuT",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 119
+        },
+        "outputId": "85b5b8ff-d5c8-401e-cbf1-4854eea40210"
+      },
+      "source": [
+        "df.genre_urls.head()"
+      ],
+      "execution_count": 75,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0    /genres/young-adult|/genres/science-fiction|/g...\n",
+              "1    /genres/fantasy|/genres/young-adult|/genres/fi...\n",
+              "2    /genres/young-adult|/genres/fantasy|/genres/ro...\n",
+              "3    /genres/classics|/genres/fiction|/genres/histo...\n",
+              "4    /genres/classics|/genres/fiction|/genres/roman...\n",
+              "Name: genre_urls, dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 75
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "l9MdER0tE2KO",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "test_genre_string = df.genre_urls[0]\n"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "IGm8bpF0FbIe",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 238
+        },
+        "outputId": "ad4238c0-0e07-412e-9fcb-5a58c98b51be"
+      },
+      "source": [
+        "genres = test_genre_string.strip().split(\"|\")\n",
+        "genres\n",
+        "for e in genres:\n",
+        "  print(e.split(\"/\")[-1])\n",
+        "  \"|\".join(genres)\n",
+        "  "
+      ],
+      "execution_count": 78,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "young-adult\n",
+            "science-fiction\n",
+            "dystopia\n",
+            "fantasy\n",
+            "science-fiction\n",
+            "romance\n",
+            "adventure\n",
+            "book-club\n",
+            "young-adult\n",
+            "teen\n",
+            "apocalyptic\n",
+            "post-apocalyptic\n",
+            "action\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "55B3ljVZFj6X",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def split_and_join_genres(url):\n",
+        "  genres = url.split(\"|\")\n",
+        "  genres = [e.split(\"/\")[-1] for e in genres]\n",
+        "  return \"|\".join(genres)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ul4XqXzYGyFQ",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 433
+        },
+        "outputId": "759fae7f-6822-4cac-de4a-d99a57c3389d"
+      },
+      "source": [
+        "df['genres']=df.genre_urls.map(split_and_join_genres)\n",
+        "df.head()"
+      ],
+      "execution_count": 82,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>rating</th>\n",
+              "      <th>review_count</th>\n",
+              "      <th>isbn</th>\n",
+              "      <th>booktype</th>\n",
+              "      <th>author_url</th>\n",
+              "      <th>year</th>\n",
+              "      <th>genre_urls</th>\n",
+              "      <th>dir</th>\n",
+              "      <th>rating_count</th>\n",
+              "      <th>name</th>\n",
+              "      <th>author</th>\n",
+              "      <th>genres</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>4.40</td>\n",
+              "      <td>136455</td>\n",
+              "      <td>0439023483</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/153394.S...</td>\n",
+              "      <td>2008</td>\n",
+              "      <td>/genres/young-adult|/genres/science-fiction|/g...</td>\n",
+              "      <td>dir01/2767052-the-hunger-games.html</td>\n",
+              "      <td>2958974</td>\n",
+              "      <td>The Hunger Games (The Hunger Games, #1)</td>\n",
+              "      <td>Suzanne_Collins</td>\n",
+              "      <td>young-adult|science-fiction|dystopia|fantasy|s...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>4.41</td>\n",
+              "      <td>16648</td>\n",
+              "      <td>0439358078</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1077326....</td>\n",
+              "      <td>2003</td>\n",
+              "      <td>/genres/fantasy|/genres/young-adult|/genres/fi...</td>\n",
+              "      <td>dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...</td>\n",
+              "      <td>1284478</td>\n",
+              "      <td>Harry Potter and the Order of the Phoenix (Har...</td>\n",
+              "      <td>J_K_Rowling</td>\n",
+              "      <td>fantasy|young-adult|fiction|fantasy|magic|chil...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>3.56</td>\n",
+              "      <td>85746</td>\n",
+              "      <td>0316015849</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/941441.S...</td>\n",
+              "      <td>2005</td>\n",
+              "      <td>/genres/young-adult|/genres/fantasy|/genres/ro...</td>\n",
+              "      <td>dir01/41865.Twilight.html</td>\n",
+              "      <td>2579564</td>\n",
+              "      <td>Twilight (Twilight, #1)</td>\n",
+              "      <td>Stephenie_Meyer</td>\n",
+              "      <td>young-adult|fantasy|romance|paranormal|vampire...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>47906</td>\n",
+              "      <td>0061120081</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1825.Har...</td>\n",
+              "      <td>1960</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/histo...</td>\n",
+              "      <td>dir01/2657.To_Kill_a_Mockingbird.html</td>\n",
+              "      <td>2078123</td>\n",
+              "      <td>To Kill a Mockingbird</td>\n",
+              "      <td>Harper_Lee</td>\n",
+              "      <td>classics|fiction|historical-fiction|academic|s...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>34772</td>\n",
+              "      <td>0679783261</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/1265.Jan...</td>\n",
+              "      <td>1813</td>\n",
+              "      <td>/genres/classics|/genres/fiction|/genres/roman...</td>\n",
+              "      <td>dir01/1885.Pride_and_Prejudice.html</td>\n",
+              "      <td>1388992</td>\n",
+              "      <td>Pride and Prejudice</td>\n",
+              "      <td>Jane_Austen</td>\n",
+              "      <td>classics|fiction|romance|historical-fiction|li...</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   rating  review_count        isbn         booktype                                         author_url  year                                         genre_urls                                                dir  rating_count                                               name           author                                             genres\n",
+              "0    4.40        136455  0439023483  good_reads:book  https://www.goodreads.com/author/show/153394.S...  2008  /genres/young-adult|/genres/science-fiction|/g...                dir01/2767052-the-hunger-games.html       2958974            The Hunger Games (The Hunger Games, #1)  Suzanne_Collins  young-adult|science-fiction|dystopia|fantasy|s...\n",
+              "1    4.41         16648  0439358078  good_reads:book  https://www.goodreads.com/author/show/1077326....  2003  /genres/fantasy|/genres/young-adult|/genres/fi...  dir01/2.Harry_Potter_and_the_Order_of_the_Phoe...       1284478  Harry Potter and the Order of the Phoenix (Har...      J_K_Rowling  fantasy|young-adult|fiction|fantasy|magic|chil...\n",
+              "2    3.56         85746  0316015849  good_reads:book  https://www.goodreads.com/author/show/941441.S...  2005  /genres/young-adult|/genres/fantasy|/genres/ro...                          dir01/41865.Twilight.html       2579564                            Twilight (Twilight, #1)  Stephenie_Meyer  young-adult|fantasy|romance|paranormal|vampire...\n",
+              "3    4.23         47906  0061120081  good_reads:book  https://www.goodreads.com/author/show/1825.Har...  1960  /genres/classics|/genres/fiction|/genres/histo...              dir01/2657.To_Kill_a_Mockingbird.html       2078123                              To Kill a Mockingbird       Harper_Lee  classics|fiction|historical-fiction|academic|s...\n",
+              "4    4.23         34772  0679783261  good_reads:book  https://www.goodreads.com/author/show/1265.Jan...  1813  /genres/classics|/genres/fiction|/genres/roman...                dir01/1885.Pride_and_Prejudice.html       1388992                                Pride and Prejudice      Jane_Austen  classics|fiction|romance|historical-fiction|li..."
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 82
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SxBqjkfYLSmm",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "7332640b-66ce-4780-8672-d647986c2c6b"
+      },
+      "source": [
+        "split_and_join_genres(\"/genres/young-adult|/genres/science-fiction\")"
+      ],
+      "execution_count": 83,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'young-adult|science-fiction'"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 83
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_jm37wKSLmrA",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "51465951-a9aa-4421-c169-1a6d81f979a9"
+      },
+      "source": [
+        "split_and_join_genres(\"\")\n"
+      ],
+      "execution_count": 84,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "''"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 84
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "quj-JVH4Lqlv",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 187
+        },
+        "outputId": "9ec7dcad-114e-4a70-da4b-143720a8977e"
+      },
+      "source": [
+        "df[df.author == \"Marguerite_Yourcenar\"]"
+      ],
+      "execution_count": 85,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>rating</th>\n",
+              "      <th>review_count</th>\n",
+              "      <th>isbn</th>\n",
+              "      <th>booktype</th>\n",
+              "      <th>author_url</th>\n",
+              "      <th>year</th>\n",
+              "      <th>genre_urls</th>\n",
+              "      <th>dir</th>\n",
+              "      <th>rating_count</th>\n",
+              "      <th>name</th>\n",
+              "      <th>author</th>\n",
+              "      <th>genres</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>1014</th>\n",
+              "      <td>4.23</td>\n",
+              "      <td>483</td>\n",
+              "      <td>0374529264</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/7732.Mar...</td>\n",
+              "      <td>1951</td>\n",
+              "      <td>/genres/historical-fiction|/genres/fiction|/ge...</td>\n",
+              "      <td>dir11/12172.Memoirs_of_Hadrian.html</td>\n",
+              "      <td>6258</td>\n",
+              "      <td>Memoirs of Hadrian</td>\n",
+              "      <td>Marguerite_Yourcenar</td>\n",
+              "      <td>historical-fiction|fiction|cultural|france|cla...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5620</th>\n",
+              "      <td>4.11</td>\n",
+              "      <td>74</td>\n",
+              "      <td>2070367983</td>\n",
+              "      <td>good_reads:book</td>\n",
+              "      <td>https://www.goodreads.com/author/show/7732.Mar...</td>\n",
+              "      <td>1968</td>\n",
+              "      <td>/genres/fiction|/genres/historical-fiction|/ge...</td>\n",
+              "      <td>dir57/953435.L_uvre_au_noir.html</td>\n",
+              "      <td>1601</td>\n",
+              "      <td>L'Åuvre au noir</td>\n",
+              "      <td>Marguerite_Yourcenar</td>\n",
+              "      <td>fiction|historical-fiction|cultural|france|eur...</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "      rating  review_count        isbn         booktype                                         author_url  year                                         genre_urls                                  dir  rating_count                name                author                                             genres\n",
+              "1014    4.23           483  0374529264  good_reads:book  https://www.goodreads.com/author/show/7732.Mar...  1951  /genres/historical-fiction|/genres/fiction|/ge...  dir11/12172.Memoirs_of_Hadrian.html          6258  Memoirs of Hadrian  Marguerite_Yourcenar  historical-fiction|fiction|cultural|france|cla...\n",
+              "5620    4.11            74  2070367983  good_reads:book  https://www.goodreads.com/author/show/7732.Mar...  1968  /genres/fiction|/genres/historical-fiction|/ge...     dir57/953435.L_uvre_au_noir.html          1601    L'Åuvre au noir  Marguerite_Yourcenar  fiction|historical-fiction|cultural|france|eur..."
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 85
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "o6gF2mXLLsrf",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 295
+        },
+        "outputId": "1e4e6182-2719-45d3-9103-ad4ad4e04f5d"
+      },
+      "source": [
+        "df.review_count.hist(bins=200)\n",
+        "plt.xlabel('number of reviews')\n",
+        "plt.ylabel(\"Freequency\")\n",
+        "plt.title(\"Number of reviews\")\n",
+        "\n",
+        "plt.show()"
+      ],
+      "execution_count": 89,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\nDhYzMyvU/wfpvYxN+mATewAAAABJRU5ErkJggg==\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9tR827k0MPEt",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 295
+        },
+        "outputId": "19329eaf-d342-4518-d0e9-58d92c1563f5"
+      },
+      "source": [
+        "plt.hist(df.year,log=True,bins=100)\n",
+        "plt.xlabel(\"Year Written\")\n",
+        "plt.ylabel(\"Freequency\")\n",
+        "plt.title(\"Number of books in a year\")\n",
+        "plt.show()"
+      ],
+      "execution_count": 90,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAYgAAAEWCAYAAAB8LwAVAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\nAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDMuMC4zLCBo\ndHRwOi8vbWF0cGxvdGxpYi5vcmcvnQurowAAG4VJREFUeJzt3XuUHGWd//H3x0AQIXJLQEjAhA2w\nhl25OAZkYWWVS4Ib4gU18YrEcPDI6i76O8TVHyiuiK6rHg4oBoWAsARkURKJsskeIyIXSZDljiRs\n2FyQBAJDuPxA4Pv7o56Gylg9Uz2Zmuqe+bzO6TPVT13629U1/e3neaqeUkRgZmbW02vqDsDMzNqT\nE4SZmRVygjAzs0JOEGZmVsgJwszMCjlBmJlZIScIaxuS5kn6l5peW5IulvSEpN8VzD9R0o0VvO6R\nktYMwHaelrT3QMRk1uAEYU1JWiVpvaTtcmWflLS0xrCqcjhwNDAuIibXHUyrImL7iHio7jhsaHGC\nsL6MAD5bdxCtkjSixVXeCKyKiGeqiMfKS7U5fze1AX8I1pd/BT4vaceeMySNlxSStsqVLZX0yTR9\noqTfSvqOpCclPSTpsFS+OtVOPt5js6MlLZa0SdKvJb0xt+2/TPM2SnpA0gdy8+ZJ+r6kRZKeAf6u\nIN49JC1I66+QNDuVzwJ+CLwtNdV8pcm+kKTzJHVLul/SO/vadpq3jaTvSlqXHt+VtE2TF/iMpHsl\njZM0WtLP077bKOk3zb440+cwMbcvzpd0XdqPt0r6iybvCUk/kfTH9L5ukLR/k+XeL2l5j7LTJF2b\ne5/fkvS/kh6VdIGkbdO8ndJ72ZCa8X4uaVxuO0slfU3Sb4FnATeXtQEnCOvLMmAp8Pl+rn8IcCew\nC/DvwHzgrcBE4CPAeZK2zy3/YeCrwGjgDuBygNTMtThtY1dgBvA9SZNy634I+BowCijqL5gPrAH2\nAE4Azpb0joj4EXAKcHNqqjmzl/eyMsV2JnCNpJ1723aa90XgUOBA4ABgMvClnhuXdAZwIvD2iFgD\nfC5tcwywG/DPQNmxcWYAXwF2AlaQ7ZdmfgHsQ7Zfbyft8wILgAmS3pQr+yhwaZo+B9iX7H1OBMYC\nZ6R5rwEuJqup7QU8B5zXY/sfBU4m+/we7vXd2eCICD/8KHwAq4CjgL8Cusm+qD4JLE3zx5N9YW2V\n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\nmJlZof8PhCxWcmtPeooAAAAASUVORK5CYII=\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "zi0-QvpuM24R",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 408
+        },
+        "outputId": "97c4b20c-d6e6-4c94-bcd6-a9adf9524d39"
+      },
+      "source": [
+        "df[df.year < 0].name "
+      ],
+      "execution_count": 92,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "47                               The Odyssey\n",
+              "246                    The Iliad/The Odyssey\n",
+              "455                             The Republic\n",
+              "596                               The Aeneid\n",
+              "629                              Oedipus Rex\n",
+              "674                           The Art of War\n",
+              "746                        The Bhagavad Gita\n",
+              "777                                 Antigone\n",
+              "1233                       The Oedipus Cycle\n",
+              "1397                          Aesop's Fables\n",
+              "1398                   The Epic of Gilgamesh\n",
+              "1428                                   Medea\n",
+              "1815                            The Oresteia\n",
+              "1882         The Trial and Death of Socrates\n",
+              "2078    The History of the Peloponnesian War\n",
+              "2527                           The Histories\n",
+              "3133                          Complete Works\n",
+              "3274                  The Nicomachean Ethics\n",
+              "3757                              Lysistrata\n",
+              "4402                           The Symposium\n",
+              "4475                                 Apology\n",
+              "5367                          Five Dialogues\n",
+              "Name: name, dtype: object"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 92
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "97s8ZwZuM8br",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "?df.groupby('year')"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3-wkS1J_NjCE",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        },
+        "outputId": "5bb11d74-5535-4803-9178-3821614daca9"
+      },
+      "source": [
+        "for year,subset in df.groupby('year'):\n",
+        "  bestbook = subset[subset.rating == subset.rating.max()]\n",
+        "  \n",
+        "  \n",
+        "  if bestbook.shape[0] > 1:\n",
+        "    print(year,bestbook.name.values,bestbook.rating.values)\n",
+        "  else:\n",
+        "    print(year,bestbook.name.values[0],bestbook.rating.values[0])\n",
+        "  "
+      ],
+      "execution_count": 96,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "-1500 The Epic of Gilgamesh 3.6\n",
+            "-800 The Iliad/The Odyssey 4.01\n",
+            "-560 Aesop's Fables 4.03\n",
+            "-512 The Art of War 3.92\n",
+            "-500 The Bhagavad Gita 4.06\n",
+            "-458 The Oresteia 3.96\n",
+            "-442 Antigone 3.52\n",
+            "-440 The Histories 3.94\n",
+            "-431 Medea 3.8\n",
+            "-429 Oedipus Rex 3.64\n",
+            "-411 The History of the Peloponnesian War 3.84\n",
+            "-400 Complete Works 4.3\n",
+            "-390 Apology 4.11\n",
+            "-380 The Republic 3.85\n",
+            "-370 The Symposium 3.99\n",
+            "-360 Five Dialogues 4.07\n",
+            "-350 The Nicomachean Ethics 3.88\n",
+            "-29 The Aeneid 3.77\n",
+            "4 The Seven Spiritual Laws of Success 4.04\n",
+            "8 Metamorphoses 4.01\n",
+            "13 The Day Jesus Rode Into Croydon 3.85\n",
+            "100 The New Oxford Annotated Bible, New Revised Standard Version 4.3\n",
+            "121 The Twelve Caesars 4.02\n",
+            "130 Holy Bible 4.45\n",
+            "158 The Golden Ass 3.88\n",
+            "174 Meditations 4.16\n",
+            "200 The Garden of Eden 3.75\n",
+            "201 Fe Fi FOE Comes 4.37\n",
+            "213 NaÃ¯ve. Super 3.9\n",
+            "397 Confessions 3.82\n",
+            "632 The Quran 4.37\n",
+            "800 Beowulf 3.38\n",
+            "900 The Arabian Nights 4.04\n",
+            "968 La BÃªte humaine (Les Rougon-Macquart, #17) 4.02\n",
+            "1002 The Pillow Book 4.04\n",
+            "1008 The Tale of Genji 3.68\n",
+            "1010 Shahnameh 4.52\n",
+            "1100 Rubaiyat of Omar Khayyam 4.22\n",
+            "1106 The TÃ¡in 3.98\n",
+            "1140 Poema de MÃ­o Cid 3.42\n",
+            "1200 The Poetic Edda 4.24\n",
+            "1215 ÙØ«ÙÙÛ ÙØ¹ÙÙÛ 4.44\n",
+            "1220 The Prose Edda 4.16\n",
+            "1300 The Imitation of Christ 4.16\n",
+            "1314 Inferno (The Divine Comedy, #1) 3.96\n",
+            "1321 The Divine Comedy 4.04\n",
+            "1348 The Decameron 3.85\n",
+            "1386 Auto-da-FÃ© 4.04\n",
+            "1390 Sir Gawain and the Green Knight 3.66\n",
+            "1391 Keep the Aspidistra Flying 3.86\n",
+            "1485 Le Morte d'Arthur 3.91\n",
+            "1516 Utopia 3.46\n",
+            "1522 Three Kingdoms 4.41\n",
+            "1532 The Prince 3.72\n",
+            "1572 The Complete Essays 4.21\n",
+            "1589 Titus Andronicus 3.7\n",
+            "1590 The Taming of the Shrew 3.82\n",
+            "1592 Monkey 4.04\n",
+            "1595 A Midsummer Night's Dream 3.93\n",
+            "1597 Richard III 3.9\n",
+            "1599 Much Ado About Nothing 4.05\n",
+            "1600 Henry V 3.85\n",
+            "1601 Twelfth Night 3.95\n",
+            "1602 Hamlet 3.98\n",
+            "1603 Othello 3.86\n",
+            "1604 Doctor Faustus 3.77\n",
+            "1605 King Lear 3.88\n",
+            "1606 Antony and Cleopatra 3.64\n",
+            "1608 Coriolanus 3.65\n",
+            "1609 Shakespeare's Sonnets 4.24\n",
+            "1611 Holy Bible 4.39\n",
+            "1621 The Anatomy of Melancholy 4.21\n",
+            "1623 The Complete Works 4.5\n",
+            "1635 La vida es sueÃ±o 3.98\n",
+            "1642 A Book of Five Rings 4.11\n",
+            "1667 Paradise Lost 3.77\n",
+            "1678 The Pilgrim's Progress 3.92\n",
+            "1680 The Divan 4.65\n",
+            "1691 The Practice of the Presence of God 4.31\n",
+            "1719 Robinson Crusoe 3.62\n",
+            "1721 Moll Flanders 3.45\n",
+            "1726 Gulliver's Travels 3.52\n",
+            "1729 A Modest Proposal and Other Satirical Works 4.03\n",
+            "1748 Clarissa, or, the History of a Young Lady 3.28\n",
+            "1749 The History of Tom Jones, a Foundling 3.72\n",
+            "1759 Candide 3.74\n",
+            "1767 The Life and Opinions of Tristram Shandy, Gentleman 3.76\n",
+            "1774 The Sorrows of Young Werther 3.59\n",
+            "1776 The Declaration of Independence and The Constitution of the United States 4.44\n",
+            "1778 Evelina 3.62\n",
+            "1781 Critique of Pure Reason 3.85\n",
+            "1782 Les Liaisons Dangereuses 4.08\n",
+            "1787 The Constitution of the United States of America 4.52\n",
+            "1790 The Marriage of Heaven and Hell 4.27\n",
+            "1791 Dream of the Red Chamber 4.05\n",
+            "1794 Songs of Innocence and of Experience 4.11\n",
+            "1795 The Monk 3.77\n",
+            "1798 Lyrical Ballads 3.92\n",
+            "1806 Phenomenology of Spirit 3.85\n",
+            "1811 Sense and Sensibility 4.04\n",
+            "1812 The Complete Grimm's Fairy Tales 4.29\n",
+            "1813 Pride and Prejudice 4.23\n",
+            "1814 Mansfield Park 3.79\n",
+            "1815 Emma 3.97\n",
+            "1817 Persuasion 4.12\n",
+            "1818 Frankenstein 3.7\n",
+            "1819 Ivanhoe 3.71\n",
+            "1820 The Legend of Sleepy Hollow 3.94\n",
+            "1823 The Night Before Christmas 4.34\n",
+            "1824 Don Juan 3.79\n",
+            "1825 Eugene Onegin 4.03\n",
+            "1826 The Last of the Mohicans (The Leatherstocking Tales #2) 3.67\n",
+            "1830 The Book of Mormon 4.42\n",
+            "1831 The Hunchback of Notre-Dame 3.93\n",
+            "1832 Faust 3.98\n",
+            "1833 Poetry 4.04\n",
+            "1834 PÃ¨re Goriot 3.79\n",
+            "1835 Hymns of The Church of Jesus Christ of Latter-day Saints 4.68\n",
+            "1837 A Season in Hell/The Drunken Boat 4.34\n",
+            "1839 A Hero of Our Time 4.09\n",
+            "1840 Tales of Mystery and Imagination 4.2\n",
+            "1841 The Old Curiosity Shop 3.69\n",
+            "1842 The pit and the pendulum and other stories (Penguin 60s) 4.12\n",
+            "1843 Lost Illusions 4.14\n",
+            "1844 The Raven 4.23\n",
+            "1845 The Raven and Other Poems 4.27\n",
+            "1847 Jane Eyre 4.07\n",
+            "1848 White Nights and Other Stories 4.09\n",
+            "1849 The Law 4.4\n",
+            "1850 Ishmael 4.4\n",
+            "1851 Paris Spleen 4.33\n",
+            "1852 Uncle Tom's Cabin 3.77\n",
+            "1853 The History of Joseph Smith by His Mother 4.37\n",
+            "1854 Walden & Civil Disobedience 3.97\n",
+            "1855 North and South 4.13\n",
+            "1856 Song of Myself 4.17\n",
+            "1857 Les Fleurs du Mal 4.26\n",
+            "1859 The Origin of Species 3.94\n",
+            "1860 Stepping Heavenward 4.27\n",
+            "1861 Notes from Underground 4.14\n",
+            "1862 Les MisÃ©rables 4.09\n",
+            "1863 From the Earth to the Moon (Extraordinary Voyages, #4) 3.76\n",
+            "1864 Our Mutual Friend 4.08\n",
+            "1865 [\"Alice's Adventures in Wonderland & Through the Looking-Glass\"\n",
+            " 'Wives and Daughters'] [4.05 4.05]\n",
+            "1866 Morning and Evening, Based on the English Standard Version 4.49\n",
+            "1867 Capital, Volume 1 (Das Kapital, #1) 4.15\n",
+            "1868 Little Women (Little Women, #1) 4.0\n",
+            "1869 The Idiot 4.15\n",
+            "1870 Complete Works 4.42\n",
+            "1871 Through the Looking-Glass, and What Alice Found There (Alice's Adventures in Wonderland #2) 4.09\n",
+            "1872 Middlemarch 3.89\n",
+            "1873 Around the World in Eighty Days 3.87\n",
+            "1874 The Complete Fairy Tales 4.27\n",
+            "1875 Illuminations 4.42\n",
+            "1876 The Adventures of Tom Sawyer 3.86\n",
+            "1877 L'Assommoir (The Dram Shop) (The Dram Shop) (Les Rougon-Macquart, #7) 4.05\n",
+            "1878 Human, All Too Human 4.2\n",
+            "1879 Sir Gibbie 4.25\n",
+            "1880 The Brothers Karamazov 4.28\n",
+            "1881 The Prince and the Pauper 3.81\n",
+            "1882 The Gay Science 4.23\n",
+            "1883 Thus Spoke Zarathustra 4.03\n",
+            "1884 The Death of Ivan Ilych 3.98\n",
+            "1885 Germinal (Les Rougon-Macquart, #13) 4.05\n",
+            "1886 Beyond Good and Evil 4.0\n",
+            "1887 A Study in Scarlet (Sherlock Holmes, #1) 4.13\n",
+            "1888 ['The Complete Fairy Tales' 'The Nightingale and the Rose'] [4.33 4.33]\n",
+            "1889 The Collected Poems 4.25\n",
+            "1890 Hunger 4.11\n",
+            "1891 A Scandal in Bohemia (The Adventures of Sherlock Holmes, #1) 4.22\n",
+            "1892 The Adventures of Sherlock Holmes (Sherlock Holmes, #3) 4.27\n",
+            "1893 The Memoirs of Sherlock Holmes (Sherlock Holmes, #4) 4.33\n",
+            "1894 The Jungle Books 3.97\n",
+            "1895 The Importance of Being Earnest and Other Plays 4.24\n",
+            "1896 Story of a Soul 4.36\n",
+            "1897 De Profundis and Other Writings 4.19\n",
+            "1898 The War of the Worlds 3.75\n",
+            "1899 The Complete Works of William Shakespeare 4.62\n",
+            "1900 Selected Stories 4.35\n",
+            "1901 The Tale of Peter Rabbit 4.14\n",
+            "1902 Holy Bible 4.66\n",
+            "1903 The Scarlet Pimpernel 4.05\n",
+            "1904 The Return of Sherlock Holmes (Sherlock Holmes, #6) 4.27\n",
+            "1905 A Little Princess 4.19\n",
+            "1906 The Unabridged Devil's Dictionary 4.15\n",
+            "1907 The Shepherd of the Hills 4.14\n",
+            "1908 The Complete Anne of Green Gables Boxed Set (Anne of Green Gables, #1-8) 4.42\n",
+            "1909 Martin Eden 4.31\n",
+            "1910 Gitanjali 4.33\n",
+            "1911 The Secret Garden 4.09\n",
+            "1912 Daddy-Long-Legs (Daddy-Long-Legs, #1) 4.07\n",
+            "1913 In the Shadow of Young Girls in Flower (In Search of Lost Time, #2) 4.39\n",
+            "1914 Rashomon and Seventeen Other Stories 4.1\n",
+            "1915 Jesus the Christ 4.66\n",
+            "1916 The Mysterious Stranger 4.14\n",
+            "1917 Anne's House of Dreams (Anne of Green Gables, #5) 4.1\n",
+            "1918 The Elements of Style 4.17\n",
+            "1919 Remembrance of Things Past 4.28\n",
+            "1920 The Guermantes Way 4.33\n",
+            "1921 Rilla of Ingleside (Anne of Green Gables, #8) 4.13\n",
+            "1922 Remembrance of Things Past 4.53\n",
+            "1923 Leave It to Psmith (Psmith, #4 ; Blandings Castle, #2) 4.28\n",
+            "1924 The Complete Sherlock Holmes 4.49\n",
+            "1925 The Captive & The Fugitive (In Search of Lost Time, #5-6) 4.41\n",
+            "1926 The World of Winnie-the-Pooh 4.41\n",
+            "1927 Time Regained (In Search of Lost Time, #7) 4.5\n",
+            "1928 The House at Pooh Corner 4.35\n",
+            "1929 Letters to a Young Poet 4.35\n",
+            "1930 The Complete Sherlock Holmes, Volume II 4.44\n",
+            "1931 The Joy of Cooking 4.15\n",
+            "1932 Journey to the End of the Night 4.25\n",
+            "1933 The Complete Novels 4.54\n",
+            "1934 I, Claudius/Claudius the God 4.42\n",
+            "1935 Musashi 4.41\n",
+            "1936 Three Comrades 4.48\n",
+            "1937 The Cost of Discipleship 4.35\n",
+            "1938 The Science of Mind 4.39\n",
+            "1939 Arch of Triumph 4.39\n",
+            "1940 The Little Prince 4.23\n",
+            "1941 Ø¹Ø¨ÙØ±ÙØ© Ø¹ÙØ± 4.25\n",
+            "1942 The Little House 4.27\n",
+            "1943 KÃ¼rk Mantolu Madonna 4.55\n",
+            "1944 Ficciones 4.48\n",
+            "1945 The Aleph and Other Stories 4.41\n",
+            "1946 The Complete Stories 4.34\n",
+            "1947 Survival in Auschwitz 4.32\n",
+            "1948 King of the Wind 4.17\n",
+            "1949 Paroles 4.27\n",
+            "1950 à®ªà¯à®©à¯à®©à®¿à®¯à®¿à®©à¯ à®à¯à®²à¯à®µà®©à¯ [Ponniyin Selvan] 4.71\n",
+            "1951 The Foundation Trilogy (Foundation, #1-3) 4.37\n",
+            "1952 Holy Bible 4.55\n",
+            "1953 The Flight of the Feathered Serpent 4.55\n",
+            "1954 The Return of the King (The Lord of the Rings, #3) 4.48\n",
+            "1955 Les rois maudits Vols 1-7 4.44\n",
+            "1956 Through Gates of Splendor 4.37\n",
+            "1957 The Cairo Trilogy (The Cairo Trilogy #1-3) 4.46\n",
+            "1958 Exodus 4.31\n",
+            "1959 ['Life and Fate' '100 Love Sonnets'] [4.44 4.44]\n",
+            "1960 The Annotated Alice 4.48\n",
+            "1961 New World Translation of the Holy Scriptures 4.59\n",
+            "1962 Labyrinths 4.47\n",
+            "1963 The Civil War 4.58\n",
+            "1964 The Feynman Lectures on Physics 4.57\n",
+            "1965 Manchild in the Promised Land 4.3\n",
+            "1966 The Disorderly Knights (The Lymond Chronicles, #3) 4.57\n",
+            "1967 ['The Master and Margarita' 'The Forgotten Soldier'] [4.33 4.33]\n",
+            "1968 The Proper Role of Government 4.49\n",
+            "1969 Pawn in Frankincense (The Lymond Chronicles, #4) 4.64\n",
+            "1970 The Fortress 4.67\n",
+            "1971 Tutunamayanlar 4.61\n",
+            "1972 Le Monogramme 4.78\n",
+            "1973 J.R.R. Tolkien 4-Book Boxed Set 4.58\n",
+            "1974 The Power Broker 4.51\n",
+            "1975 Checkmate (The Lymond Chronicles, #6) 4.71\n",
+            "1976 Roots 4.39\n",
+            "1977 A Lover's Discourse 4.37\n",
+            "1978 The Best of Roald Dahl 4.38\n",
+            "1979 GÃ¶del, Escher, Bach 4.29\n",
+            "1980 Cosmos 4.35\n",
+            "1981 The Lord God Made Them All 4.36\n",
+            "1982 The Book of Disquiet 4.52\n",
+            "1983 Essays and Lectures 4.27\n",
+            "1984 Ø§ÙØ¥Ø³ÙØ§Ù Ø¨ÙÙ Ø§ÙØ´Ø±Ù ÙØ§ÙØºØ±Ø¨ 4.46\n",
+            "1985 Lonesome Dove 4.44\n",
+            "1986 The Hitchhiker's Guide to the Galaxy 4.5\n",
+            "1987 Calvin and Hobbes 4.61\n",
+            "1988 The Essential Calvin and Hobbes 4.64\n",
+            "1989 The Hobbit 4.48\n",
+            "1990 The Authoritative Calvin And Hobbes 4.7\n",
+            "1991 Rain of Gold 4.49\n",
+            "1992 The Indispensable Calvin and Hobbes 4.71\n",
+            "1993 Mark of the Lion Trilogy 4.75\n",
+            "1994 The Complete Aubrey/Maturin Novels (5 Volumes) 4.69\n",
+            "1995 The Calvin and Hobbes Tenth Anniversary Book 4.63\n",
+            "1996 Calvin and Hobbes 4.75\n",
+            "1997 The Song of the Lioness Quartet (Song of the Lioness, #1-4) 4.57\n",
+            "1998 Harry Potter Boxset (Harry Potter, #1-7) 4.73\n",
+            "1999 The Harry Potter Collection (Harry Potter, #1-4) 4.63\n",
+            "2000 Standing for Something 4.64\n",
+            "2001 A Storm of Swords (A Song of Ice and Fire, #3-1) 4.5\n",
+            "2002 Way to Be! 4.62\n",
+            "2003 The Complete Far Side, 1980-1994 4.66\n",
+            "2004 Ù¾ÛØ±Ù Ú©Ø§ÙÙ 4.58\n",
+            "2005 The Complete Calvin and Hobbes 4.8\n",
+            "2006 Warriors Boxed Set (Warriors, #1-3) 4.67\n",
+            "2007 ESV Study Bible 4.76\n",
+            "2008 The Absolute Sandman, Vol. 4 4.75\n",
+            "2009 Black Dagger Brotherhood 4.69\n",
+            "2010 The Years Distilled 4.93\n",
+            "2011 Family Secrets 5.0\n",
+            "2012 ['A Book About Absolutely Nothing.'\n",
+            " 'Obscured Darkness (Family Secrets #2)' \"Patience's Love\"\n",
+            " 'Abstraction In Theory - Laws Of Physical Transaction'] [5. 5. 5. 5.]\n",
+            "2013 Blade Heart 4.93\n",
+            "2014 ['An Elephant Is On My House' 'Untainted (Photographer Trilogy, #3)'] [5. 5.]\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "duKbatTDONgw",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": 0,
+      "outputs": []
+    }
+  ]
+}
